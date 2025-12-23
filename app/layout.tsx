@@ -20,7 +20,7 @@ export default function RootLayout({
       <body>
         <AppRouterCacheProvider>
           <ThemeProvider theme={theme}>
-            <ModeSwitch />
+            {/* <ModeSwitch /> */}
             {children}
             <CssBaseline />
           </ThemeProvider>
