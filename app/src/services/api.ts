@@ -8,12 +8,14 @@ export const api = axios.create({ baseURL: HOST_URL });
 
 api.interceptors.response.use(
   (res) => res,
-  (error) => Promise.reject((error.response && error.response.data) || 'Something went wrong')
+  (interceptError) => {
+    return Promise.reject((interceptError.response && interceptError.response.data) || 'Something went wrong')
+  }
 );
 
-export const axiosErrorHandler = (error: any) => {
-  const status = error?.statusCode ?? error?.response?.status ?? 500;
-  const message = error?.message ?? error?.response?.data?.message ?? 'Something went wrong';
+export const axiosErrorHandler = (errorHandler: any) => {
+  const status = errorHandler?.statusCode ?? errorHandler?.response?.status ?? 500;
+  const message = errorHandler?.message ?? errorHandler?.response?.data?.message ?? 'Something went wrong';
 
   return NextResponse.json(
     {

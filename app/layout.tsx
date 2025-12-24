@@ -4,6 +4,7 @@ import { ThemeProvider } from "@mui/material/styles";
 import { CssBaseline } from "@mui/material";
 import theme from "./src/theme";
 import ModeSwitch from "./src/components/ModeSwitch";
+import Providers from "./providers";
 
 export const metadata: Metadata = {
   title: "AlmoxApp",
@@ -18,6 +19,7 @@ export default function RootLayout({
   return (
     <html lang="pt-br">
       <body>
+        <Providers>
         <AppRouterCacheProvider>
           <ThemeProvider theme={theme}>
             {/* <ModeSwitch /> */}
@@ -25,6 +27,7 @@ export default function RootLayout({
             <CssBaseline />
           </ThemeProvider>
         </AppRouterCacheProvider>
+        </Providers>
       </body>
     </html>
   );

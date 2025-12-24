@@ -1,16 +1,21 @@
 'use client';
 
+import { useState } from 'react';
 import { Button, Card, Grid, Stack, TextField } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 
 import * as Yup from 'yup';
 import { Controller, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { api } from './src/services/api';
+import { signIn } from 'next-auth/react';
 
 export default function Home() {
+
+  const [errorMessage, setErrorMessage] = useState<string>();
+  const router = useRouter()
 
   const FormContainer = styled(Card)(({ theme }) => ({
     display: 'flex',
@@ -56,13 +61,21 @@ export default function Home() {
 
   const onSubmit = handleSubmit(async (data) => {
     try {
-      await api.post('api/v1/auth/login', data)
-        .then(res => console.log({res}));
+      const result = await signIn("credentials", {
+        redirect: false, // evita redirecionamento automático
+        email: data.email,
+        password: data.password,
+      })
+      
+      if (result?.error) {
+        setErrorMessage(result.error);
+      } else {
+        router.push('/dashboard');
+      }
         
-      // router.push(returnTo || PATH_AFTER_LOGIN);
-      console.log('Login data', {data, API_URL: process.env.API_URL});
     } catch (error) {
-      console.error({error});
+      setErrorMessage('Erro ao tentar efetuar login. Tente novamente.');
+      console.error(error);
     }
   });
 
@@ -75,6 +88,14 @@ export default function Home() {
             <Grid size={{ xs: 12 }} textAlign={'center'}>
               <Image src="/images/almoxapp.svg" alt="AlmoxApp" width={128} height={64} style={{ margin: '0 auto' }} />
             </Grid>
+
+            {errorMessage && (
+              <Grid size={{ xs: 12 }}>
+                <Typography variant='body2' color='error' textAlign={'center'}>
+                  {errorMessage}
+                </Typography>
+              </Grid>
+            )}
             
             <Grid size={{ xs: 12 }}>
               <Controller
